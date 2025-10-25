@@ -1,7 +1,7 @@
 '''Proyecto sobre el sistema de gestion de cupos universitarios'''
-from abc import ABCMeta#impotar ABCMeta
+from abc import ABC#impotar ABCMeta
 from abc import abstractmethod#importar abstractmethod
-class Usuario(metaclass=ABCMeta):#Clase abstracta Usuario
+class Usuario(ABC):#Clase abstracta Usuario
     def __init__(self, cedula_pasaporte: str, nombre:str, apellido:str, correo:str):#Atributos de la clase Usuario, que seran heredados por las clases hijas
         self.cedula_pasaporte = cedula_pasaporte
         self.nombre = nombre
@@ -81,7 +81,7 @@ class Profesor(Usuario):#Clase Hija Profesor de Usuario
     def cerrar_sesion(self):
         print(f"Profesor {self.nombre} ha cerrado sesión.")
 
-class Universidad(Iniciar_fase,Finalizar_fase):#Clase Universidad
+class Universidad(Iniciar_fase,Finalizar_fase):#Clase Universidad que hereda de Iniciar_fase y Finalizar_fase
     Pais = "Ecuador"
     def __init__(self, nombre:str, provincia:str, canton:str, direccion:str, enlace:str,universidad:str,tipo:str):
         self.nombre = nombre
@@ -116,7 +116,7 @@ class Universidad(Iniciar_fase,Finalizar_fase):#Clase Universidad
     def finalizar(self):#Metodo finalizar la universidad
         print(f"La universidad {self.nombre} ha finalizado su admisión en {self.Pais}.")
 
-class Oferta_Academica:#Clase Oferta_Academica
+class Oferta_Academica(Universidad):#Clase Oferta_Academica
     def __init__(self, carrera:str, cantidad:int):
         self.carrera = carrera
         self.cantidad = cantidad
@@ -141,7 +141,7 @@ class Periodo(Iniciar_fase,Finalizar_fase):#Clase Periodo que hereda de Iniciar_
     def finalizar(self):#Metodo finalizar el periodo
         print(f"El periodo {self.Ano_Lectivo} - {self.Semestre} ha finalizado.")
 
-class Inscripcion(Iniciar_fase,Finalizar_fase):#Clase Inscripcion
+class Inscripcion(Iniciar_fase,Finalizar_fase):#Clase Inscripcion que hereda de Iniciar_fase y Finalizar_fase
     def __init__(self, carrera:str, facultad:str):
         self.carrera = carrera
         self.facultad = facultad
@@ -173,7 +173,7 @@ class Evaluacion:#Clase Evaluacion
             raise ValueError("La nota final no puede ser negativa o mayor a mil.") 
         self._puntaje = valor
     
-class Postulacion(Iniciar_fase,Finalizar_fase,Aspirante):#Clase Postulacion que contiene los metodos iniciar y finalizar
+class Postulacion(Iniciar_fase,Finalizar_fase,Aspirante):#Clase Postulacion que contiene los metodos iniciar y finalizar de las interfaces y hereda de Aspirante
     def __init__(self, carrera:str, nota_final:int):
         self.carrera = carrera
         self.nota_final = None 
@@ -182,7 +182,7 @@ class Postulacion(Iniciar_fase,Finalizar_fase,Aspirante):#Clase Postulacion que 
     def finalizar(self):#Metodo finalizar la postulación
         print(f"La postulacion para la carrera de {self.carrera} ha finalizado.")
 
-class Servicio_web(Oferta_Academica):#Clase Servicio_web
+class Servicio_web(Oferta_Academica):#Clase Servicio_web que hereda de Oferta_Academica
     Pais = "Ecuador"
     def __init__(self, provincia:str, enlace:str, carrera:str, cantidad:int):
         super().__init__(carrera, cantidad)
