@@ -149,7 +149,20 @@ class Inscripcion(Iniciar_fase,Finalizar_fase):#Clase Inscripcion que hereda de 
         print(f"La inscripción para la carrera de {self.carrera} en la facultad de {self.facultad} ha iniciado.")
     def finalizar(self):#Metodo finalizar la inscripcion
         print(f"La inscripción para la carrera de {self.carrera} en la facultad de {self.facultad} ha finalizado.")
+#inyeccion_de_dependencias.add.josh
+class TipoDeExamen(ABC):
+    @abstractmethod
+    def descripcion(self):
+        pass
 
+class Mixto(TipoDeExamen):
+    def descripcion(self):
+        return "Examen combinado con teoría y práctica"
+
+class PorArea(TipoDeExamen):
+    def descripcion(self):
+        return "Examen especializado por área de conocimiento"
+        
 class Evaluacion:#Clase Evaluacion 
     def __init__(self, tipo:str, puntaje:int, horario:str, modalidad:str, sede:str):
         self.tipo = tipo
@@ -165,6 +178,7 @@ class Evaluacion:#Clase Evaluacion
         if (valor < 0) or (valor > 1000): 
             raise ValueError("La nota final no puede ser negativa o mayor a mil.") 
         self._puntaje = valor
+    
     
 class Postulacion(Iniciar_fase,Finalizar_fase,Aspirante):#Clase Postulacion que contiene los metodos iniciar y finalizar de las interfaces y hereda de Aspirante
     def __init__(self, carrera:str, nota_final:int):
