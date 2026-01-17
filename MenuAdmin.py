@@ -1,6 +1,6 @@
 import Usuario#Importar módulo Usuario
 from datetime import date#Importar date para manejo de fechas y abajo crea la cuenta de administrador
-from SASFU import Inscripcion, Postulacion, ObservadorAdmin, ObservadorAspirante#Importar módulos de SASFU
+from SASFU import Inscripcion, Postulacion#Importar módulos de SASFU
 from GeneradorBDHorarioEvaluacion import crear_base_datos_horarios
 admin = Usuario.Administrador("10101010", "Chris", "ADMIN", "admin@hotmail.com", "Administrador")
 repo = Usuario.RepositorioAspirantesJSON()#Repositorio de aspirantes

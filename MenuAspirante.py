@@ -1,8 +1,7 @@
 import Usuario#Importar el módulo Usuario que contiene las clases necesarias
-from SASFU import Inscripcion, Postulacion, ObservadorAspirante#Importar módulos de SASFU
+from SASFU import Inscripcion, Postulacion#Importar módulos de SASFU
 sistema = Usuario.SistemaFacade()#Crear una instancia del sistema
 usuario_actual = None#Variable para almacenar el usuario que ha iniciado sesión
-observador_aspirante = ObservadorAspirante()#Crear instancia del observador de aspirante
 while True:#Menú principal
     print("\nBienvenido al sistema SASFU")
     print("1. Crear usuario")
