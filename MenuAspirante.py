@@ -128,7 +128,7 @@ while True:#Menú principal
         if usuario_actual is None:#Verificar si el usuario ha iniciado sesión
             print("Debe iniciar sesión primero.")
             continue
-        post = Postulacion("", 0)
+        post = Postulacion("", usuario_actual)
         post.iniciar()
         print("=== Menú Postulaciones ===")
         print("1. Realizar postulación")

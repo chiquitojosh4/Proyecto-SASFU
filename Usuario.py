@@ -3,7 +3,7 @@ from abc import abstractmethod#importar abstractmethod
 import json#importar json
 import os#importar os
 from datetime import date, datetime, timedelta#importar date para manejo de fechas
-
+from SASFU import CronogramaAcademico#importar De SASFU una clase 
 class Autenticable(ABC):#Interfaz Autenticable
     @abstractmethod#Método iniciar sesión
     def iniciar_sesion(self):
@@ -188,6 +188,7 @@ class Administrador(Usuario, AsignarSede, Cargable, GestionProceso):#Clase Hija 
     def __init__(self, cedula, nombre, apellido, correo, cargo):
         super().__init__(cedula, nombre, apellido, correo)
         self.cargo = cargo
+        self.cronograma = None
         self.fases = {# Diccionario de fases y secuencia
             "inscripcion": {"inicio": None, "fin": None},
             "evaluacion": {"inicio": None, "fin": None},
@@ -317,6 +318,25 @@ class Administrador(Usuario, AsignarSede, Cargable, GestionProceso):#Clase Hija 
         self._cerrar_fase("postulacion")
     def postulaciones_activas(self):#Verificar si postulaciones están activas
         return self._fase_activa("postulacion")
+    def elegir_periodo(self):
+        print("=== Elegir periodo académico ===")
+        anio = input("Ingrese el año lectivo (ej: 2025): ")
+        periodo = input("Ingrese el periodo (1 o 2): ")
+        try:
+            self.cronograma = CronogramaAcademico(anio, periodo)
+            print("Periodo cargado correctamente.")
+        except Exception as e:
+            print("Error:", e)
+    def mostrar_fechas_inscripciones(self):
+        if self.cronograma is None:
+            print("Primero debe elegir un periodo.")
+            return
+        fechas = self.cronograma.obtener_fechas("inscripcion")
+        print("=== Fechas de Inscripción ===")
+        print("Inicio:", fechas["inicio"])
+        print("Fin:", fechas["fin"])
+
+
 
 class Aspirante(Usuario, Cargable, SolicitudAsistencia, GestorSede, RegistroInscripcion):#Clase Hija Aspirante de Usuario
     def __init__(self, cedula, nombre, apellido, correo, telefono, titulo, nota_grado):
