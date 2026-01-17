@@ -205,6 +205,10 @@ class Administrador(Usuario, AsignarSede, Cargable, GestionProceso):#Clase Hija 
             print("No se puede asignar sede en fines de semana.")
             return
         ruta_salas = os.path.join(os.path.dirname(__file__), "horarios_evaluacion.json")
+        if not os.path.exists(ruta_salas):
+            print("No existe la base de datos de horarios.")
+            print("Primero debe generar los horarios.")
+            return
         with open(ruta_salas, "r", encoding="utf-8") as f:#Leer base de datos de salas
             salas = json.load(f)
         sala = next((s for s in salas if s["codigo"] == codigo_sala), None)#Buscar sala por codigo
