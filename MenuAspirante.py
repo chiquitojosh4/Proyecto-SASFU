@@ -72,7 +72,6 @@ while True:#Menú principal
             print("Debe iniciar sesión primero.")
             continue
         ins = Inscripcion("", "")
-        ins.agregar_observador(observador_aspirante)
         ins.iniciar()
         print("=== Menú Inscripciones ===")
         print("1. Realizar inscripción")
@@ -130,7 +129,6 @@ while True:#Menú principal
             print("Debe iniciar sesión primero.")
             continue
         post = Postulacion("", 0)
-        post.agregar_observador(observador_aspirante)
         post.iniciar()
         print("=== Menú Postulaciones ===")
         print("1. Realizar postulación")
