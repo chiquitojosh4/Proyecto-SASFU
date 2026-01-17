@@ -3,7 +3,8 @@
 '''SASFU'''
 from abc import ABC#impotar ABCMeta
 from abc import abstractmethod#importar abstractmethod
-from Usuario import Aspirante#importar clase Aspirante desde Usuario.py
+import json
+from datetime import datetime, date
 
 class Iniciar_fase(ABC):#Interfaz Iniciar_fase
     @abstractmethod
@@ -14,19 +15,6 @@ class Finalizar_fase(ABC):#Interfaz Finalizar_fase
     @abstractmethod
     def finalizar(self):
         pass
-
-class Observador(ABC):#Interfaz Observer para Postulacion
-    @abstractmethod
-    def actualizar(self, mensaje: str):
-        pass
-# Observadores concretos
-class ObservadorAdmin(Observador):
-    def actualizar(self, mensaje: str):
-        print(f"[ADMIN] {mensaje}")
-
-class ObservadorAspirante(Observador):
-    def actualizar(self, mensaje: str):
-        print(f"[ASPIRANTE] {mensaje}")
 
 class Universidad(Iniciar_fase,Finalizar_fase):#Clase Universidad que hereda de Iniciar_fase y Finalizar_fase
     Pais = "Ecuador"
@@ -104,24 +92,47 @@ class Periodo(Iniciar_fase,Finalizar_fase):#Clase Periodo que hereda de Iniciar_
     def finalizar(self):#Metodo finalizar el periodo
         print(f"El periodo {self.Ano_Lectivo} - {self.Semestre} ha finalizado.")
 
+class CronogramaAcademico:#Clase Cronograma Academico
+    def __init__(self, anio, periodo):#Atributos de la Clase Cronograma Academico
+        self.clave = f"{anio}-{periodo}"
+        with open("cronograma_oficial.json", "r", encoding="utf-8") as f:
+            cronogramas = json.load(f)
+        if self.clave not in cronogramas:
+            raise ValueError("No existe cronograma para este periodo")
+        self.fases = self._convertir_fechas(cronogramas[self.clave])
+    def _convertir_fechas(self, fases):#Metodo convertir a fecha
+        for fase in fases:
+            fases[fase]["inicio"] = datetime.strptime(
+                fases[fase]["inicio"], "%Y-%m-%d"
+            ).date()
+            fases[fase]["fin"] = datetime.strptime(
+                fases[fase]["fin"], "%Y-%m-%d"
+            ).date()
+        return fases
+    def fase_activa(self, fase):#Metodo fase activa
+        hoy = date.today()
+        return self.fases[fase]["inicio"] <= hoy <= self.fases[fase]["fin"]
+    def obtener_fechas(self, fase):#Metodo obtener fecha
+        return self.fases[fase]
+    def mostrar_estado_fases(self):#Metodo mostrar estado de fecha
+        estado = {}
+        hoy = date.today()
+        for fase, info in self.fases.items():
+            estado[fase] = {
+                "inicio": info["inicio"],
+                "fin": info["fin"],
+                "activa": info["inicio"] <= hoy <= info["fin"]
+            }
+        return estado
+
 class Inscripcion(Iniciar_fase,Finalizar_fase):#Clase Inscripcion que hereda de Iniciar_fase y Finalizar_fase
     def __init__(self, carrera: str, facultad: str):
         self.carrera = carrera
         self.facultad = facultad
-        self.observadores = []#Múltiples observadores
-    def agregar_observador(self, observador: Observador):
-        self.observadores.append(observador)
-    def notificar(self, mensaje: str):
-        for obs in self.observadores:
-            obs.actualizar(mensaje)
     def iniciar(self):#Metodo iniciar la inscripción
-        mensaje = ("Las inscripciones universitarias han comenzado.")
-        print(mensaje)
-        self.notificar(mensaje)
+        print("Las inscripciones universitarias han comenzado.")
     def finalizar(self):#Metodo finalizar la inscripción
-        mensaje = ("Las inscripciones universitarias han finalizado.")
-        print(mensaje)
-        self.notificar(mensaje)
+        print("Las inscripciones universitarias han finalizado.")
 
 class tipo_de_examen(ABC):#Clase base
     @abstractmethod
@@ -172,26 +183,19 @@ class Evaluacion:#Clase que usa la fábrica para obtener el tipo de examen
         print(self.tipo_examen.descripcion())
         print(f"Puntaje obtenido: {self._puntaje}/1000")
 
-class Postulacion(Iniciar_fase, Finalizar_fase, Aspirante):#Clase que notifica a múltiples observadores
-    def __init__(self, carrera: str, aspirante: Aspirante):
+class Postulacion(Iniciar_fase, Finalizar_fase):#Clase que notifica a múltiples observadores
+    def __init__(self, carrera: str, aspirante ):
+        from Usuario import Aspirante
+        if not isinstance(aspirante, Aspirante):
+            raise TypeError("Debe ser un objeto Aspirante")
         self.carrera = carrera
         self.aspirante = aspirante
-        self.observadores = []#Múltiples observadores
         self._nota_final = 0
         self.detalle_puntos = {}
-    def agregar_observador(self, observador: Observador):
-        self.observadores.append(observador)
-    def notificar(self, mensaje: str):
-        for obs in self.observadores:
-            obs.actualizar(mensaje)
     def iniciar(self):#Metodo iniciar la postulación
-        mensaje = "Las postulaciones universitarias han comenzado."
-        print(mensaje)            
-        self.notificar(mensaje)  
+        print("Las postulaciones universitarias han comenzado.")
     def finalizar(self):#Metodo finalizar la postulación
-        mensaje = "La postulación ha finalizado."
-        print(mensaje)
-        self.notificar(mensaje)
+        print("La postulación ha finalizado.")
     def calcular_nota_situacion(self):#Metodo calcular la nota de situación
         if self.aspirante.nacionalidad.upper() == "ECUATORIANO":#Si es Ecuatoriano
             self.nota_final = int((self.aspirante.nota_grado * 0.5 + self.aspirante._nota_evaluacion * 0.5) * 10)  
